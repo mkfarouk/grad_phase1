@@ -1,4 +1,3 @@
-// controller/contact_controller.dart
 
 import '../Model/Contacts.dart';
 import '../Repository/ContactRepository.dart';
@@ -8,19 +7,26 @@ class ContactController {
   List<ContactModel>? contacts;
 
   Future<void> loadContacts() async {
+    if (contacts != null) return; // Prevent reloading if already loaded
+
     try {
       contacts = await _repository.fetchContacts();
+      print("Contacts loaded: ${contacts?.map((c) => c.displayName).toList()}");
     } catch (e) {
-      throw Exception('Failed to load contacts: $e');
+      print("Error loading contacts: $e");
+      rethrow;
     }
   }
-/*returns the contacts with the specified alphabet and may return none if you don't have a
-  contact with that alphabet*/
-  List<ContactModel>? getContactsFilteredByAlphabet(String alphabet) {
+
+  List<ContactModel> getAllContacts() {
+    return contacts ?? [];
+  }
+
+  List<ContactModel> getContactsFilteredByAlphabet(String alphabet) {
     if (contacts == null || contacts!.isEmpty) return [];
-    //print("Contacts loaded: ${contacts!.length}");
+
     return contacts!
-        .where((contact) => contact.displayName.toUpperCase().startsWith(alphabet.toUpperCase()))
+        .where((contact) => contact.displayName.toUpperCase().startsWith(alphabet))
         .toList();
   }
 }

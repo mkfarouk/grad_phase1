@@ -2,14 +2,20 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import '../../Controller/fetchContactsHandler.dart';
+import '../../Model/Contacts.dart';
 import 'CirclePainter.dart';
 
 class CircleLayout extends StatefulWidget {
+  final List<ContactModel> contacts;
+
+  const CircleLayout({Key? key, required this.contacts}) : super(key: key);
+
   @override
   _CircleLayoutState createState() => _CircleLayoutState();
 }
 
 class _CircleLayoutState extends State<CircleLayout> {
+
   final ContactController _controller = ContactController();
   Offset _offset = Offset(0, 0);
   double radius = 178.0;
@@ -21,6 +27,7 @@ class _CircleLayoutState extends State<CircleLayout> {
   void initState() {
     super.initState();
     _loadContacts();
+    // _contacts = ContactRepository().fetchContacts();
   }
 
   Future<void> _loadContacts() async {

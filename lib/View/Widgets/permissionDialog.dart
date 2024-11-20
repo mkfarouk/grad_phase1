@@ -1,59 +1,44 @@
-// widgets/permission_dialog.dart
 import 'package:flutter/material.dart';
-import '../Screens/landing.dart';
-import '../Screens/home.dart';
 
 class PermissionDialog extends StatelessWidget {
-  final VoidCallback onAccept; // Callback function for when "Accept" is chosen
+  final VoidCallback onAccept;
+  final VoidCallback onDeny;
 
-  const PermissionDialog({super.key, required this.onAccept});
+  const PermissionDialog({Key? key, required this.onAccept, required this.onDeny}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Permission Request'),
-      content: const Text('This app needs access to your contacts in order to work. Do you accept?'),
-      actions: <Widget>[
+      content: const Text('This app needs access to your contacts to function properly.'),
+      actions: [
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const LandingScreen()));
-            // Show a snackbar if permission is denied
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('You need to accept to proceed.'),
-                duration: Duration(seconds: 4),
-              ),
-
-            );
+            Navigator.of(context).pop();
+            onDeny();
           },
           child: const Text('Deny'),
         ),
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
-            onAccept(); // Call
-            // the onAccept callback to navigate
+            Navigator.of(context).pop();
+            onAccept();
           },
           child: const Text('Accept'),
         ),
       ],
     );
   }
-  static void showPermissionDialog(BuildContext context, void Function() onDeny) {
+
+  static void showPermissionDialog({
+    required BuildContext context,
+    required VoidCallback onAccept,
+    required VoidCallback onDeny,
+  }) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return PermissionDialog(
-          onAccept: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-        );
+      builder: (context) {
+        return PermissionDialog(onAccept: onAccept, onDeny: onDeny);
       },
     );
   }
