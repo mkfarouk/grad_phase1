@@ -1,4 +1,3 @@
-// view/circle_layout_page.dart
 import 'package:flutter/material.dart';
 import 'dart:math';
 import '../../Controller/fetchContactsHandler.dart';
@@ -27,7 +26,6 @@ class _CircleLayoutState extends State<CircleLayout> {
   void initState() {
     super.initState();
     _loadContacts();
-    // _contacts = ContactRepository().fetchContacts();
   }
 
   Future<void> _loadContacts() async {
@@ -63,12 +61,14 @@ class _CircleLayoutState extends State<CircleLayout> {
   List<Widget> buildCircleLayout() {
     List<Widget> nodes = [];
 
+    // Add the central "You" node
     nodes.add(Positioned(
       left: centerX + _offset.dx - 20,
       top: centerY + _offset.dy - 20,
       child: _createNode('You'),
     ));
 
+    // Add alphabet nodes around the circle
     for (int i = 0; i < 26; i++) {
       String alphabet = String.fromCharCode(i + 65);
       double angle = (2 * pi / 26) * i;
@@ -80,7 +80,6 @@ class _CircleLayoutState extends State<CircleLayout> {
         top: y,
         child: GestureDetector(
           onTap: () => _onNodeTap(alphabet),
-
           child: _createNode(alphabet),
         ),
       ));
@@ -116,7 +115,8 @@ class _CircleLayoutState extends State<CircleLayout> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Contacts starting with $alphabet'),
+          backgroundColor: Colors.black87,  // Darken the dialog background
+          title: Text('Contacts with letter $alphabet', style: TextStyle(color: Colors.white, fontSize: 20)),
           content: Container(
             width: double.maxFinite,
             child: ListView.builder(
@@ -127,9 +127,20 @@ class _CircleLayoutState extends State<CircleLayout> {
                     ? contact.phoneNumber // Get the phone number
                     : 'No phone number'; // Default message if no phone number
 
-                return ListTile(
-                  title: Text(contact.displayName),
-                  subtitle: Text(phoneNumber), // Show phone number as subtitle
+                return Card(
+                  color: Colors.grey[850],
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    leading: Icon(Icons.account_circle, color: Colors.white),
+                    title: Text(
+                      contact.displayName,
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      phoneNumber,
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ),
                 );
               },
             ),
@@ -137,7 +148,7 @@ class _CircleLayoutState extends State<CircleLayout> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Close'),
+              child: Text('Close', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -145,9 +156,8 @@ class _CircleLayoutState extends State<CircleLayout> {
     } else {
       // Show a message if no contacts match the filter
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No contacts found starting with $alphabet.')),
+        SnackBar(content: Text('No contacts found starting with $alphabet.', style: TextStyle(color: Colors.white))),
       );
     }
   }
-
 }
