@@ -5,7 +5,8 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget  {
   @override
   final Size preferredSize;
   final String text;
-  const AppBarWidget({super.key, required this.text}) : preferredSize = const Size.fromHeight(kToolbarHeight);
+  final VoidCallback onRefresh; // Callback function for the refresh button
+  const AppBarWidget({super.key, required this.text, required this.onRefresh}) : preferredSize = const Size.fromHeight(kToolbarHeight);
 
 
   @override
@@ -18,9 +19,16 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget  {
         textAlign: TextAlign.center,
 
       ),
-      backgroundColor: Colors.blueGrey,
+      backgroundColor: const Color.fromARGB(255, 139, 96, 96),
       centerTitle: true,
       elevation: 0,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: 'Refresh Contacts',
+          onPressed: onRefresh,
+        ),
+      ],
     );
   }
 }

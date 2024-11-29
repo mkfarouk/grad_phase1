@@ -1,45 +1,58 @@
 import 'package:flutter/material.dart';
 import '../../Model/Contacts.dart';
 import '../Widgets/CircleLayout.dart';
+import '../Widgets/SearchContactsOverlay.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final List<ContactModel>? contacts;
 
   const HomeScreen({Key? key, required this.contacts}) : super(key: key);
 
   @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _isSearchOpen = false; // Tracks whether the search widget is open
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearchOpen = !_isSearchOpen;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100), // AppBar height
-        child: AppBar(
-          backgroundColor: Colors.black,
-          elevation: 0, // Flat AppBar
-          flexibleSpace: Align(
-            alignment: Alignment.bottomCenter, // Place content at the very bottom
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 20), // Adds spacing
-              child: Text(
-                'S H O F L Y',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 28, // Larger font size for better impact
-                  fontWeight: FontWeight.w600, // Slightly lighter than bold for elegance
-                  letterSpacing: 1.5, // Add space between letters for a modern look
-                  shadows: [
-                    Shadow(
-                      blurRadius: 4.0,
-                      color: Colors.black.withOpacity(0.5),
-                      offset: const Offset(0, 2),
-                    ),
-                  ], // Add subtle shadow for depth
-                ),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: const Text(
+          'S H O F L Y',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.white),
+            tooltip: 'Search Contacts',
+            onPressed: _toggleSearch,
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          CircleLayout(contacts: widget.contacts ?? []),
+
+          // Floating Search Widget
+          if (_isSearchOpen)
+            Positioned.fill(
+              child: SearchContactsOverlay(
+                contacts: widget.contacts ?? [],
+                onClose: _toggleSearch,
               ),
             ),
-          ),
-        ),
+        ],
       ),
-      body: CircleLayout(contacts: contacts ?? []), // Pass contacts to CircleLayout
     );
   }
 }
